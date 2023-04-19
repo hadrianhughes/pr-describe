@@ -3,9 +3,14 @@
 git cherry -v main $(git rev-parse --abbrev-ref HEAD) | while read p; do
   commit_id=${p:2:40}
   msg="* "
-  msg+=$(git rev-list --format=%B --max-count=1 $commit_id)
+
+  if [[ "$1" = "-c" ]]; then
+    msg+=$(git rev-list --format=%B --max-count=1 $commit_id)
+  else
+    msg+=$(git log --format=%B -n 1 $commit_id)
+  fi
+
   msg=$(sed /^$/d <<< "$msg")
-  msg+=$'\n'
 
   echo "$msg"
 done
